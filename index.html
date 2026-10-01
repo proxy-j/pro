@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Proxy</title>
+<style>
+  html, body { height: 100%; margin: 0; }
+  body {
+    display: flex; flex-direction: column; align-items: center; justify-content: center;
+    gap: 14px; background: #111827; color: #f3f4f6;
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  h1 { font-size: 2rem; font-weight: 600; margin: 0 0 6px; }
+  input {
+    width: min(420px, 85vw); padding: 12px 14px; font-size: 1rem;
+    border: 1px solid #374151; border-radius: 8px; background: #1f2937; color: inherit;
+  }
+  input:focus { outline: 2px solid #60a5fa; border-color: transparent; }
+  button {
+    padding: 11px 22px; font-size: 1rem; border: 0; border-radius: 8px;
+    background: #3b82f6; color: #fff; cursor: pointer;
+  }
+  button:hover { background: #2563eb; }
+</style>
+</head>
+<body>
+  <h1>Proxy</h1>
+  <input id="url" type="text" placeholder="Enter a link" autocomplete="off" autofocus>
+  <button id="go">Open in about:blank</button>
+
+<script>
+  var input = document.getElementById("url");
+
+  function toUrl(v) {
+    v = v.trim();
+    if (/^https?:\/\//i.test(v)) return v;
+    if (/^[^\s]+\.[^\s]+$/.test(v)) return "https://" + v;
+    return "https://duckduckgo.com/html/?q=" + encodeURIComponent(v);
+  }
+
+  function go() {
+    if (!input.value.trim()) return;
+    var target = location.origin + "/p?url=" + encodeURIComponent(toUrl(input.value));
+    var w = window.open("about:blank", "_blank");
+    if (!w) { alert("Popup blocked. Allow popups for this site and try again."); return; }
+    var d = w.document;
+    d.body.style.margin = "0";
+    d.body.style.height = "100vh";
+    var f = d.createElement("iframe");
+    f.src = target;
+    f.style.cssText = "border:0;width:100%;height:100%;";
+    d.body.appendChild(f);
+  }
+
+  document.getElementById("go").addEventListener("click", go);
+  input.addEventListener("keydown", function (e) { if (e.key === "Enter") go(); });
+</script>
+</body>
+</html>
